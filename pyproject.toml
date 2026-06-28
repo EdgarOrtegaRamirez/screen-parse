@@ -1,0 +1,65 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "screen-parse"
+version = "0.1.0"
+description = "Lightweight UI element parser for AI phone agents — parses screenshots and accessibility data"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [
+    {name = "Edgar Ortega Ramirez"},
+]
+keywords = ["screen", "accessibility", "ui-parsing", "mobile", "ai-agents", "automation"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Multimedia :: Graphics",
+]
+dependencies = [
+    "pillow>=12.0.0",
+    "click>=8.1.7,<9.0.0",
+    "pyyaml>=6.0,<7.0.0",
+    "numpy>=2.0.0,<3.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=9.1.0",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.4.0,<1.0.0",
+]
+mcp = [
+    "mcp>=1.0.0,<2.0.0",
+]
+
+[project.scripts]
+screenparse = "screenparse.cli:main"
+
+[project.urls]
+Repository = "https://github.com/EdgarOrtegaRamirez/screen-parse"
+Issues = "https://github.com/EdgarOrtegaRamirez/screen-parse/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["screenparse"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "SIM"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
