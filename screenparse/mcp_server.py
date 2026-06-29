@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import logging
 import sys
-from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
@@ -12,7 +11,7 @@ logger = logging.getLogger(__name__)
 try:
     from mcp.server import Server
     from mcp.server.stdio import stdio_server
-    from mcp.types import Tool, TextContent
+    from mcp.types import TextContent, Tool
     MCP_AVAILABLE = True
 except ImportError:
     MCP_AVAILABLE = False
@@ -92,38 +91,38 @@ async def run_mcp_server() -> None:
     @app.call_tool()
     async def call_tool(name: str, arguments: dict) -> list[TextContent]:
         parser = ScreenParser()
-        
+
         try:
             if name == "parse_screenshot":
                 image_path = arguments.get("image_path")
                 if not image_path:
                     return [TextContent(type="text", text="Error: image_path is required")]
-                
+
                 result = parser.parse_image(image_path)
                 output = result.to_dict()
-                
+
                 if arguments.get("stats"):
                     output["statistics"] = {
                         "total_elements": result.element_count,
                         "type_counts": result.type_counts,
                         "parse_time_ms": round(result.parse_time_ms, 2),
                     }
-                
+
                 return [TextContent(type="text", text=str(output))]
-            
+
             elif name == "parse_accessibility":
                 acc_path = arguments.get("accessibility_path")
                 if not acc_path:
                     return [TextContent(type="text", text="Error: accessibility_path is required")]
-                
+
                 result = parser.parse_accessibility(acc_path)
                 output = result.to_dict()
-                
+
                 return [TextContent(type="text", text=str(output))]
-            
+
             else:
                 return [TextContent(type="text", text=f"Unknown tool: {name}")]
-        
+
         except FileNotFoundError as e:
             return [TextContent(type="text", text=f"Error: {e}")]
         except ValueError as e:
@@ -136,12 +135,12 @@ async def run_mcp_server() -> None:
 def main() -> None:
     """Entry point for the MCP server."""
     import asyncio
-    
+
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     )
-    
+
     asyncio.run(run_mcp_server())
 
 

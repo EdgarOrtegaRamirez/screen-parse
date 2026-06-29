@@ -24,7 +24,7 @@ class TestSanitizePath:
         """Test with a valid file path."""
         test_file = tmp_path / "test.txt"
         test_file.write_text("hello")
-        
+
         result = sanitize_path(test_file)
         assert result.exists()
 
@@ -42,7 +42,7 @@ class TestSanitizePath:
         """Test that path traversal is blocked."""
         test_file = tmp_path / "test.txt"
         test_file.write_text("hello")
-        
+
         # Create a file outside tmp_path to test traversal to it
         parent_test = tmp_path.parent / "test.txt"
         parent_test.write_text("hello")
@@ -61,7 +61,7 @@ class TestValidateExtension:
         """Test with an allowed extension."""
         test_file = tmp_path / "test.png"
         test_file.write_text("data")
-        
+
         validate_extension(test_file, {".png", ".jpg"})
         # Should not raise
 
@@ -69,7 +69,7 @@ class TestValidateExtension:
         """Test with a disallowed extension."""
         test_file = tmp_path / "test.exe"
         test_file.write_text("malicious")
-        
+
         with pytest.raises(ValueError, match="Unsupported file extension"):
             validate_extension(test_file, {".png", ".jpg"})
 
@@ -77,7 +77,7 @@ class TestValidateExtension:
         """Test that extension matching is case insensitive."""
         test_file = tmp_path / "test.PNG"
         test_file.write_text("data")
-        
+
         validate_extension(test_file, {".png", ".jpg"})
         # Should not raise
 

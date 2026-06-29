@@ -7,7 +7,6 @@ import textwrap
 
 import pytest
 
-
 SAMPLE_ACCESSIBILITY_XML = textwrap.dedent("""\
     <?xml version="1.0" encoding="UTF-8"?>
     <hierarchy rotation="0">

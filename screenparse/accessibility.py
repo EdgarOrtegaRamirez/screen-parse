@@ -7,7 +7,6 @@ import pathlib
 import re
 import time
 import xml.etree.ElementTree as ET
-from typing import Any
 
 from screenparse.element import BoundingBox, ElementType, ParseResult, UIElement
 from screenparse.utils import (
@@ -119,12 +118,12 @@ class AccessibilityParser:
         include_content_description: bool,
     ) -> None:
         """Recursively collect all UI elements into a flat list.
-        
+
         Skips intermediate layout containers — only collects actual
         UI widget elements (buttons, text, inputs, etc.).
         """
         node_class = node.get("class", "")
-        
+
         # Skip layout containers — recurse into them without collecting
         if node_class in self.LAYOUT_CONTAINERS:
             for child in node:
@@ -135,7 +134,7 @@ class AccessibilityParser:
                     child, elements, include_hidden, include_content_description
                 )
             return
-        
+
         for child in node:
             child_class = child.get("class", "")
             # Don't collect layout containers — just recurse into them
@@ -195,9 +194,7 @@ class AccessibilityParser:
         enabled_str = node.get("enabled", "").lower()
         if enabled_str == "true":
             return True
-        if enabled_str == "false":
-            return False
-        return True
+        return enabled_str != "false"
 
     def _extract_bbox(self, node: ET.Element) -> BoundingBox | None:
         bounds = node.get("bounds")
@@ -227,14 +224,22 @@ class AccessibilityParser:
             return self.ANDROID_TAG_MAP[tag]
 
         node_type = node.get("type", "").lower()
-        if "button" in node_type: return ElementType.BUTTON
-        if "text" in node_type or "label" in node_type: return ElementType.TEXT
-        if "edit" in node_type or "input" in node_type: return ElementType.INPUT
-        if "image" in node_type or "icon" in node_type: return ElementType.IMAGE
-        if "check" in node_type: return ElementType.CHECKBOX
-        if "radio" in node_type: return ElementType.RADIO
-        if "list" in node_type or "recycler" in node_type: return ElementType.LIST
-        if "container" in node_type or "layout" in node_type: return ElementType.CONTAINER
+        if "button" in node_type:
+            return ElementType.BUTTON
+        if "text" in node_type or "label" in node_type:
+            return ElementType.TEXT
+        if "edit" in node_type or "input" in node_type:
+            return ElementType.INPUT
+        if "image" in node_type or "icon" in node_type:
+            return ElementType.IMAGE
+        if "check" in node_type:
+            return ElementType.CHECKBOX
+        if "radio" in node_type:
+            return ElementType.RADIO
+        if "list" in node_type or "recycler" in node_type:
+            return ElementType.LIST
+        if "container" in node_type or "layout" in node_type:
+            return ElementType.CONTAINER
 
         content_desc = node.get("content-desc", "").lower()
         if any(w in content_desc for w in ("icon", "image", "picture")):

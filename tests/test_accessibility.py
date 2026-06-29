@@ -94,7 +94,6 @@ class TestAccessibilityParser:
         assert result.element_count == 0
 
     def test_parse_invalid_xml(self, tmp_path: str) -> None:
-        import pathlib
         bad_xml = tmp_path / "bad.xml"
         bad_xml.write_text("not valid xml <<<", encoding="utf-8")
 
@@ -143,7 +142,7 @@ class TestAccessibilityParser:
         parser = AccessibilityParser()
         result = parser.parse(str(temp_xml_file))
 
-        type_map = {e.element_type.value: e for e in result.elements}
+        {e.element_type.value: e for e in result.elements}
 
         # Check specific element types
         buttons = [e for e in result.elements if e.element_type == ElementType.BUTTON]
@@ -157,7 +156,6 @@ class TestAccessibilityParser:
 
     def test_parse_content_description_fallback(self, tmp_path: str) -> None:
         """Test that content-desc is used as text fallback when text is empty."""
-        import pathlib
         xml = tmp_path / "fallback.xml"
         xml.write_text(
             '<?xml version="1.0"?>\n'
@@ -181,7 +179,6 @@ class TestAccessibilityParser:
 
     def test_parse_multiple_children(self, tmp_path: str) -> None:
         """Test that child elements are properly parsed."""
-        import pathlib
         xml = tmp_path / "children.xml"
         xml.write_text(
             '<?xml version="1.0"?>\n'

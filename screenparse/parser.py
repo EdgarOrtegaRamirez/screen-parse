@@ -5,19 +5,17 @@ from __future__ import annotations
 import json
 import logging
 import pathlib
-from typing import Any
 
 from screenparse.accessibility import AccessibilityParser
 from screenparse.element import ParseResult
 from screenparse.image_parser import ImageParser
-from screenparse.utils import sanitize_path
 
 logger = logging.getLogger(__name__)
 
 
 class ScreenParser:
     """Unified parser for screenshots and accessibility data.
-    
+
     Provides a simple interface to parse both image screenshots and
     accessibility dumps into structured UI element data.
     """
@@ -44,15 +42,15 @@ class ScreenParser:
         verbose: bool = False,
     ) -> ParseResult:
         """Parse either an image or accessibility dump.
-        
+
         Args:
             image_path: Path to a screenshot image (PNG, JPG, etc.).
             accessibility_path: Path to an accessibility dump file (XML).
             verbose: If True, enable verbose logging.
-        
+
         Returns:
             ParseResult with detected UI elements.
-        
+
         Raises:
             ValueError: If neither path is provided or both are provided.
             FileNotFoundError: If the file doesn't exist.
@@ -63,7 +61,7 @@ class ScreenParser:
             )
         if not image_path and not accessibility_path:
             raise ValueError("Must provide either image_path or accessibility_path.")
-        
+
         if image_path:
             return self.parse_image(image_path, verbose)
         else:
@@ -75,11 +73,11 @@ class ScreenParser:
         verbose: bool = False,
     ) -> ParseResult:
         """Parse a screenshot image to extract UI elements.
-        
+
         Args:
             image_path: Path to the screenshot image.
             verbose: If True, enable verbose logging.
-        
+
         Returns:
             ParseResult with detected UI elements.
         """
@@ -90,10 +88,10 @@ class ScreenParser:
         accessibility_path: str | pathlib.Path,
     ) -> ParseResult:
         """Parse an accessibility dump to extract UI elements.
-        
+
         Args:
             accessibility_path: Path to the accessibility dump file.
-        
+
         Returns:
             ParseResult with extracted UI elements.
         """
@@ -111,14 +109,14 @@ class ScreenParser:
         verbose: bool = False,
     ) -> ParseResult:
         """Parse and optionally output results.
-        
+
         Args:
             image_path: Path to screenshot image.
             accessibility_path: Path to accessibility dump.
             output_path: Path to write JSON output. If None, writes to stdout.
             stats: If True, also output summary statistics.
             verbose: If True, enable verbose logging.
-        
+
         Returns:
             ParseResult with detected UI elements.
         """
@@ -127,9 +125,9 @@ class ScreenParser:
             accessibility_path=accessibility_path,
             verbose=verbose,
         )
-        
+
         output_data = result.to_dict()
-        
+
         # Add stats if requested
         if stats:
             output_data["statistics"] = {
@@ -143,10 +141,10 @@ class ScreenParser:
                     else "N/A"
                 ),
             }
-        
+
         # Output results
         json_str = json.dumps(output_data, indent=2)
-        
+
         if output_path:
             out = pathlib.Path(output_path).resolve()
             # Ensure parent directory exists
@@ -155,5 +153,5 @@ class ScreenParser:
             logger.info("Results written to: %s", out)
         else:
             print(json_str)
-        
+
         return result

@@ -10,7 +10,6 @@ from pathlib import Path
 import click
 
 from screenparse import __version__
-from screenparse.element import ParseResult
 from screenparse.parser import ScreenParser
 
 
@@ -22,7 +21,7 @@ def _setup_logging(quiet: bool = False, verbose: bool = False) -> None:
         level = logging.DEBUG
     else:
         level = logging.INFO
-    
+
     logging.basicConfig(
         level=level,
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
@@ -60,12 +59,12 @@ output:
 @click.pass_context
 def main(ctx: click.Context, quiet: bool, verbose: bool) -> None:
     """ScreenParse — UI element parser for AI phone agents.
-    
+
     Analyze screenshots and accessibility dumps to extract structured
     UI element information for automation and AI agents.
     """
     _setup_logging(quiet=quiet, verbose=verbose)
-    
+
     if ctx.invoked_subcommand is None and ctx.obj is not None:
         click.echo(main.get_help(ctx))
 
@@ -112,14 +111,14 @@ def parse(
     verbose: bool,
 ) -> None:
     """Parse a screenshot image or accessibility dump.
-    
+
     Analyzes the input file and extracts UI elements with their
     positions, types, and text content.
     """
     _setup_logging(quiet=ctx.obj.get("quiet", False), verbose=verbose or ctx.obj.get("verbose", False))
-    
+
     parser = ScreenParser()
-    
+
     try:
         result = parser.parse_and_output(
             image_path=image_path,
@@ -134,7 +133,7 @@ def parse(
     except ValueError as e:
         click.echo(f"Error: {e}", err=True)
         sys.exit(1)
-    
+
     # Print stats if requested
     if stats:
         click.echo("\n--- Statistics ---")
@@ -151,7 +150,7 @@ def parse(
             click.echo("Warnings:")
             for warning in result.warnings:
                 click.echo(f"  - {warning}")
-    
+
     # Filter by type if requested
     if types:
         type_filter = set(t.strip().lower() for t in types.split(","))
@@ -197,14 +196,14 @@ def analyze(
     verbose: bool,
 ) -> None:
     """Analyze screen layout and element distribution.
-    
+
     Provides a high-level summary of the UI structure without
     extracting individual element details.
     """
     _setup_logging(quiet=ctx.obj.get("quiet", False), verbose=verbose or ctx.obj.get("verbose", False))
-    
+
     parser = ScreenParser()
-    
+
     try:
         result = parser.parse(
             image_path=image_path,
@@ -216,38 +215,38 @@ def analyze(
     except ValueError as e:
         click.echo(f"Error: {e}", err=True)
         sys.exit(1)
-    
+
     click.echo("=" * 60)
     click.echo("Screen Analysis Report")
     click.echo("=" * 60)
     click.echo(f"\nSource: {result.source_path}")
     click.echo(f"Source type: {result.source_type}")
     click.echo(f"Parse time: {result.parse_time_ms:.2f} ms")
-    
+
     if result.image_width > 0:
         click.echo(f"Dimensions: {result.image_width}x{result.image_height}")
-    
+
     click.echo(f"\nTotal elements: {result.element_count}")
     click.echo(f"Top-level elements: {len(result.elements)}")
-    
+
     if result.type_counts:
         click.echo("\nElement Distribution:")
         total = sum(result.type_counts.values())
         for etype, count in sorted(result.type_counts.items(), key=lambda x: -x[1]):
             pct = count / total * 100 if total > 0 else 0
             click.echo(f"  {etype:15s}: {count:4d} ({pct:5.1f}%)")
-    
+
     if result.warnings:
         click.echo(f"\nWarnings ({len(result.warnings)}):")
         for warning in result.warnings:
             click.echo(f"  ⚠ {warning}")
-    
+
     # Element density analysis
     if result.image_width > 0 and result.image_height > 0:
         area = result.image_width * result.image_height
         elements_per_1000 = len(result.elements) / (area / 1000)
         click.echo(f"\nElement density: {elements_per_1000:.2f} per 1000px²")
-    
+
     click.echo("=" * 60)
 
 
@@ -255,28 +254,28 @@ def analyze(
 def info() -> None:
     """Show project information and supported formats."""
     from screenparse import __version__
-    
+
     click.echo("=" * 60)
     click.echo("ScreenParse")
     click.echo(f"Version: {__version__}")
     click.echo("=" * 60)
-    
+
     click.echo("\nSupported Image Formats:")
     for fmt in ["PNG", "JPG", "JPEG", "BMP", "WebP", "GIF"]:
         click.echo(f"  • {fmt}")
-    
+
     click.echo("\nSupported Accessibility Formats:")
     click.echo("  • Android XML (uiautomator dump)")
     click.echo("  • iOS plist (basic)")
-    
+
     click.echo("\nOutput Formats:")
     click.echo("  • JSON (default)")
     click.echo("  • YAML")
-    
+
     click.echo("\nElement Types Detected:")
     for etype in ["button", "text", "image", "input", "icon", "container", "checkbox", "radio", "list", "link", "unknown"]:
         click.echo(f"  • {etype}")
-    
+
     click.echo("\n" + "=" * 60)
 
 
