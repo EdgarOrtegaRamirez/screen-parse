@@ -230,8 +230,17 @@ class TestElementType:
 
     def test_all_types_present(self) -> None:
         expected = {
-            "button", "text", "image", "input", "icon",
-            "container", "checkbox", "radio", "list", "link", "unknown",
+            "button",
+            "text",
+            "image",
+            "input",
+            "icon",
+            "container",
+            "checkbox",
+            "radio",
+            "list",
+            "link",
+            "unknown",
         }
         actual = {e.value for e in ElementType}
         assert actual == expected

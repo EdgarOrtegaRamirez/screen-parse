@@ -218,7 +218,7 @@ class TestParseResultIntegration:
         xml = tmp_path / "nested.xml"
         xml.write_text(
             '<?xml version="1.0"?>\n'
-            '<hierarchy>\n'
+            "<hierarchy>\n"
             '  <node class="android.widget.FrameLayout"\n'
             '        visible-to-user="true"\n'
             '        bounds="[0,0][1080,2340]">\n'
@@ -230,9 +230,9 @@ class TestParseResultIntegration:
             '            text="Child Button"\n'
             '            visible-to-user="true"\n'
             '            bounds="[100,300][500,400]"/>\n'
-            '    </node>\n'
-            '  </node>\n'
-            '</hierarchy>',
+            "    </node>\n"
+            "  </node>\n"
+            "</hierarchy>",
             encoding="utf-8",
         )
 

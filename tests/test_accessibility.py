@@ -159,13 +159,13 @@ class TestAccessibilityParser:
         xml = tmp_path / "fallback.xml"
         xml.write_text(
             '<?xml version="1.0"?>\n'
-            '<hierarchy>\n'
+            "<hierarchy>\n"
             '  <node class="android.widget.ImageView"\n'
             '        text="null"\n'
             '        content-desc="Search icon"\n'
             '        visible-to-user="true"\n'
             '        bounds="[100,100][200,200]"/>\n'
-            '</hierarchy>',
+            "</hierarchy>",
             encoding="utf-8",
         )
 
@@ -182,7 +182,7 @@ class TestAccessibilityParser:
         xml = tmp_path / "children.xml"
         xml.write_text(
             '<?xml version="1.0"?>\n'
-            '<hierarchy>\n'
+            "<hierarchy>\n"
             '  <node class="android.widget.FrameLayout"\n'
             '        visible-to-user="true"\n'
             '        bounds="[0,0][1080,2340]">\n'
@@ -194,8 +194,8 @@ class TestAccessibilityParser:
             '          text="Child 2"\n'
             '          visible-to-user="true"\n'
             '          bounds="[100,300][500,400]"/>\n'
-            '  </node>\n'
-            '</hierarchy>',
+            "  </node>\n"
+            "</hierarchy>",
             encoding="utf-8",
         )
 

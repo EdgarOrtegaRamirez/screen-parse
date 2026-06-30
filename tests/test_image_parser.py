@@ -44,10 +44,14 @@ class TestImageParser:
 
     def test_parse_simple_image(self) -> None:
         """Test parsing a simple solid-color image."""
-        path = self._create_test_image(200, 200, colors={
-            (255, 0, 0): (0, 0, 200, 100),  # Red top half
-            (0, 0, 255): (0, 100, 200, 200),  # Blue bottom half
-        })
+        path = self._create_test_image(
+            200,
+            200,
+            colors={
+                (255, 0, 0): (0, 0, 200, 100),  # Red top half
+                (0, 0, 255): (0, 100, 200, 200),  # Blue bottom half
+            },
+        )
 
         try:
             parser = ImageParser()
@@ -110,9 +114,13 @@ class TestImageParser:
 
     def test_parse_to_dict(self) -> None:
         """Test that parse result can be serialized to dict."""
-        path = self._create_test_image(200, 200, colors={
-            (0, 128, 255): (0, 0, 100, 100),
-        })
+        path = self._create_test_image(
+            200,
+            200,
+            colors={
+                (0, 128, 255): (0, 0, 100, 100),
+            },
+        )
 
         try:
             parser = ImageParser()
@@ -128,10 +136,14 @@ class TestImageParser:
 
     def test_parse_element_has_id(self) -> None:
         """Test that each element has a unique ID."""
-        path = self._create_test_image(200, 200, colors={
-            (255, 0, 0): (0, 0, 100, 100),
-            (0, 255, 0): (100, 0, 200, 100),
-        })
+        path = self._create_test_image(
+            200,
+            200,
+            colors={
+                (255, 0, 0): (0, 0, 100, 100),
+                (0, 255, 0): (100, 0, 200, 100),
+            },
+        )
 
         try:
             parser = ImageParser()
@@ -144,9 +156,13 @@ class TestImageParser:
 
     def test_parse_element_has_type(self) -> None:
         """Test that each element has a valid type."""
-        path = self._create_test_image(200, 200, colors={
-            (100, 150, 200): (0, 0, 100, 100),
-        })
+        path = self._create_test_image(
+            200,
+            200,
+            colors={
+                (100, 150, 200): (0, 0, 100, 100),
+            },
+        )
 
         try:
             parser = ImageParser()
@@ -159,9 +175,13 @@ class TestImageParser:
 
     def test_parse_element_has_bbox(self) -> None:
         """Test that each element has a valid bounding box."""
-        path = self._create_test_image(200, 200, colors={
-            (50, 100, 150): (0, 0, 100, 100),
-        })
+        path = self._create_test_image(
+            200,
+            200,
+            colors={
+                (50, 100, 150): (0, 0, 100, 100),
+            },
+        )
 
         try:
             parser = ImageParser()
@@ -190,12 +210,16 @@ class TestImageParser:
 
     def test_parse_large_image(self) -> None:
         """Test parsing a larger image."""
-        path = self._create_test_image(800, 600, colors={
-            (255, 100, 50): (0, 0, 400, 300),
-            (50, 100, 255): (400, 0, 800, 300),
-            (100, 255, 50): (0, 300, 400, 600),
-            (255, 50, 100): (400, 300, 800, 600),
-        })
+        path = self._create_test_image(
+            800,
+            600,
+            colors={
+                (255, 100, 50): (0, 0, 400, 300),
+                (50, 100, 255): (400, 0, 800, 300),
+                (100, 255, 50): (0, 300, 400, 600),
+                (255, 50, 100): (400, 300, 800, 600),
+            },
+        )
 
         try:
             parser = ImageParser()
@@ -233,11 +257,15 @@ class TestImageParser:
     def test_parse_with_children(self) -> None:
         """Test that overlapping elements create parent-child relationships."""
         # Create an image with nested colored regions
-        path = self._create_test_image(300, 300, colors={
-            (200, 200, 200): (0, 0, 300, 300),  # Gray background
-            (100, 100, 100): (50, 50, 250, 250),  # Darker inner box
-            (50, 50, 50): (100, 100, 200, 200),  # Even darker center
-        })
+        path = self._create_test_image(
+            300,
+            300,
+            colors={
+                (200, 200, 200): (0, 0, 300, 300),  # Gray background
+                (100, 100, 100): (50, 50, 250, 250),  # Darker inner box
+                (50, 50, 50): (100, 100, 200, 200),  # Even darker center
+            },
+        )
 
         try:
             parser = ImageParser()

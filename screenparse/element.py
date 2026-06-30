@@ -16,6 +16,7 @@ def _make_serializable(obj: Any) -> Any:
     # Handle numpy types
     try:
         import numpy as np
+
         if isinstance(obj, (np.integer,)):
             return int(obj)
         if isinstance(obj, (np.floating,)):
@@ -90,10 +91,7 @@ class BoundingBox:
 
     def contains(self, point_x: int, point_y: int) -> bool:
         """Check if a point is inside this bounding box."""
-        return (
-            self.left <= point_x < self.right
-            and self.top <= point_y < self.bottom
-        )
+        return self.left <= point_x < self.right and self.top <= point_y < self.bottom
 
     def overlaps(self, other: BoundingBox) -> bool:
         """Check if this box overlaps with another box."""

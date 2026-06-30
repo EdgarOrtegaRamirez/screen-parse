@@ -183,7 +183,7 @@ class TestDominantColors:
     def test_two_colors(self) -> None:
         pixels: list[int] = []
         pixels.extend([255, 0, 0, 255] * 50)  # Red
-        pixels.extend([0, 0, 255, 255] * 50)   # Blue
+        pixels.extend([0, 0, 255, 255] * 50)  # Blue
         colors = dominant_colors(pixels, max_colors=4)
         assert len(colors) >= 2
 

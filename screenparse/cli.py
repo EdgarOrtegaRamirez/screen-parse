@@ -71,33 +71,39 @@ def main(ctx: click.Context, quiet: bool, verbose: bool) -> None:
 
 @main.command()
 @click.option(
-    "--image", "-i",
+    "--image",
+    "-i",
     "image_path",
     type=click.Path(exists=True, readable=True, path_type=Path),
     help="Path to screenshot image file.",
 )
 @click.option(
-    "--accessibility", "-a",
+    "--accessibility",
+    "-a",
     "accessibility_path",
     type=click.Path(exists=True, readable=True, path_type=Path),
     help="Path to accessibility dump file.",
 )
 @click.option(
-    "--output", "-o",
+    "--output",
+    "-o",
     type=click.Path(path_type=Path),
     help="Output file path. Defaults to stdout.",
 )
 @click.option(
-    "--types", "-t",
+    "--types",
+    "-t",
     type=str,
     help="Comma-separated element types to filter (e.g., button,input,text).",
 )
 @click.option(
-    "--stats", is_flag=True,
+    "--stats",
+    is_flag=True,
     help="Show summary statistics after output.",
 )
 @click.option(
-    "--verbose", is_flag=True,
+    "--verbose",
+    is_flag=True,
     help="Verbose parsing output.",
 )
 @click.pass_context
@@ -115,7 +121,9 @@ def parse(
     Analyzes the input file and extracts UI elements with their
     positions, types, and text content.
     """
-    _setup_logging(quiet=ctx.obj.get("quiet", False), verbose=verbose or ctx.obj.get("verbose", False))
+    _setup_logging(
+        quiet=ctx.obj.get("quiet", False), verbose=verbose or ctx.obj.get("verbose", False)
+    )
 
     parser = ScreenParser()
 
@@ -154,10 +162,7 @@ def parse(
     # Filter by type if requested
     if types:
         type_filter = set(t.strip().lower() for t in types.split(","))
-        filtered_elements = [
-            e for e in result.elements
-            if e.element_type.value in type_filter
-        ]
+        filtered_elements = [e for e in result.elements if e.element_type.value in type_filter]
         if output:
             filtered_data = {
                 "source_type": result.source_type,
@@ -173,19 +178,22 @@ def parse(
 
 @main.command()
 @click.option(
-    "--image", "-i",
+    "--image",
+    "-i",
     "image_path",
     type=click.Path(exists=True, readable=True, path_type=Path),
     help="Path to screenshot image file.",
 )
 @click.option(
-    "--accessibility", "-a",
+    "--accessibility",
+    "-a",
     "accessibility_path",
     type=click.Path(exists=True, readable=True, path_type=Path),
     help="Path to accessibility dump file.",
 )
 @click.option(
-    "--verbose", is_flag=True,
+    "--verbose",
+    is_flag=True,
     help="Verbose output.",
 )
 @click.pass_context
@@ -200,7 +208,9 @@ def analyze(
     Provides a high-level summary of the UI structure without
     extracting individual element details.
     """
-    _setup_logging(quiet=ctx.obj.get("quiet", False), verbose=verbose or ctx.obj.get("verbose", False))
+    _setup_logging(
+        quiet=ctx.obj.get("quiet", False), verbose=verbose or ctx.obj.get("verbose", False)
+    )
 
     parser = ScreenParser()
 
@@ -273,7 +283,19 @@ def info() -> None:
     click.echo("  • YAML")
 
     click.echo("\nElement Types Detected:")
-    for etype in ["button", "text", "image", "input", "icon", "container", "checkbox", "radio", "list", "link", "unknown"]:
+    for etype in [
+        "button",
+        "text",
+        "image",
+        "input",
+        "icon",
+        "container",
+        "checkbox",
+        "radio",
+        "list",
+        "link",
+        "unknown",
+    ]:
         click.echo(f"  • {etype}")
 
     click.echo("\n" + "=" * 60)

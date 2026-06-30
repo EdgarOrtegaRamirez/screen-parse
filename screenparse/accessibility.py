@@ -130,9 +130,7 @@ class AccessibilityParser:
                 element = self._node_to_element(child, include_hidden, include_content_description)
                 if element is not None:
                     elements.append(element)
-                self._collect_flat(
-                    child, elements, include_hidden, include_content_description
-                )
+                self._collect_flat(child, elements, include_hidden, include_content_description)
             return
 
         for child in node:
@@ -143,9 +141,7 @@ class AccessibilityParser:
                 if element is not None:
                     elements.append(element)
             # Always recurse (layout containers skip themselves but process children)
-            self._collect_flat(
-                child, elements, include_hidden, include_content_description
-            )
+            self._collect_flat(child, elements, include_hidden, include_content_description)
 
     def _node_to_element(
         self,
@@ -209,8 +205,10 @@ class AccessibilityParser:
             return BoundingBox(0, 0, 0, 0)
         x1, y1, x2, y2 = (int(v) for v in match.groups())
         return BoundingBox(
-            x=min(x1, x2), y=min(y1, y2),
-            width=abs(x2 - x1), height=abs(y2 - y1),
+            x=min(x1, x2),
+            y=min(y1, y2),
+            width=abs(x2 - x1),
+            height=abs(y2 - y1),
         )
 
     def _infer_type(self, node: ET.Element) -> ElementType:
@@ -285,9 +283,18 @@ class AccessibilityParser:
             if elem.bbox.width >= 1000 and elem.bbox.height >= 1800:
                 # Check if it's a container type, not a regular UI element
                 role = elem.accessibility_role.lower()
-                if any(c in role for c in ("framelayout", "linearlayout",
-                                           "relativelayout", "scrollview",
-                                           "webview", "tabhost", "container")):
+                if any(
+                    c in role
+                    for c in (
+                        "framelayout",
+                        "linearlayout",
+                        "relativelayout",
+                        "scrollview",
+                        "webview",
+                        "tabhost",
+                        "container",
+                    )
+                ):
                     screen_frame = elem
                     break
 
@@ -305,22 +312,19 @@ class AccessibilityParser:
                 if parent.bbox.area == 0:
                     continue
                 # Child must be fully contained within parent
-                if (child.bbox.x >= parent.bbox.x and
-                    child.bbox.y >= parent.bbox.y and
-                    child.bbox.right <= parent.bbox.right and
-                    child.bbox.bottom <= parent.bbox.bottom and
-                    parent.bbox.area > child.bbox.area * 3):
+                if (
+                    child.bbox.x >= parent.bbox.x
+                    and child.bbox.y >= parent.bbox.y
+                    and child.bbox.right <= parent.bbox.right
+                    and child.bbox.bottom <= parent.bbox.bottom
+                    and parent.bbox.area > child.bbox.area * 3
+                ):
                     parent.children.append(child)
                     break
 
         # Return top-level elements (excluding screen frame if found)
         child_ids = {c.element_id for e in elements for c in e.children}
-        exclude_ids = child_ids | (
-            {screen_frame.element_id} if screen_frame else set()
-        )
-        top_level = [
-            e for e in elements
-            if e.element_id not in exclude_ids
-        ]
+        exclude_ids = child_ids | ({screen_frame.element_id} if screen_frame else set())
+        top_level = [e for e in elements if e.element_id not in exclude_ids]
         top_level.sort(key=lambda e: (e.bbox.y, e.bbox.x))
         return top_level

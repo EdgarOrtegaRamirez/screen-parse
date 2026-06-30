@@ -56,9 +56,7 @@ class ScreenParser:
             FileNotFoundError: If the file doesn't exist.
         """
         if image_path and accessibility_path:
-            raise ValueError(
-                "Provide either image_path or accessibility_path, not both."
-            )
+            raise ValueError("Provide either image_path or accessibility_path, not both.")
         if not image_path and not accessibility_path:
             raise ValueError("Must provide either image_path or accessibility_path.")
 

@@ -48,10 +48,7 @@ def validate_extension(path: pathlib.Path, extensions: set[str]) -> None:
     """
     if path.suffix.lower() not in extensions:
         allowed = ", ".join(sorted(extensions))
-        raise ValueError(
-            f"Unsupported file extension '{path.suffix}'. "
-            f"Allowed: {allowed}"
-        )
+        raise ValueError(f"Unsupported file extension '{path.suffix}'. Allowed: {allowed}")
 
 
 def human_readable_size(bytes_val: int) -> str:
@@ -65,12 +62,14 @@ def human_readable_size(bytes_val: int) -> str:
 
 def measure_time(func):
     """Decorator that measures execution time and logs it."""
+
     def wrapper(*args, **kwargs):
         start = time.perf_counter()
         result = func(*args, **kwargs)
         elapsed = (time.perf_counter() - start) * 1000
         logger.debug("Function %s executed in %.2f ms", func.__name__, elapsed)
         return result
+
     return wrapper
 
 
@@ -94,9 +93,7 @@ def _flatten_pixels(pixels: list[int] | list[list[int]]) -> list[int]:
     return result
 
 
-def is_solid_region(
-    pixels: list[int] | list[list[int]], threshold: float = 0.05
-) -> bool:
+def is_solid_region(pixels: list[int] | list[list[int]], threshold: float = 0.05) -> bool:
     """Check if pixel values are mostly uniform (solid color region).
 
     Args:
@@ -143,14 +140,12 @@ def is_solid_region(
     if mean_intensity == 0:
         return True
 
-    cv = (std_dev ** 0.5) / mean_intensity  # coefficient of variation
+    cv = (std_dev**0.5) / mean_intensity  # coefficient of variation
 
     return cv < threshold
 
 
-def estimate_text_density(
-    pixels: list[int], min_alpha: int = 200
-) -> float:
+def estimate_text_density(pixels: list[int], min_alpha: int = 200) -> float:
     """Estimate the proportion of pixels that might be text.
 
     Text pixels tend to have high contrast against background.
@@ -234,12 +229,8 @@ def color_distance(
     color2: tuple[int, int, int],
 ) -> float:
     """Calculate perceptual distance between two RGB colors."""
-    r1, g1, b1 = colorsys.rgb_to_hls(
-        color1[0] / 255.0, color1[1] / 255.0, color1[2] / 255.0
-    )
-    r2, g2, b2 = colorsys.rgb_to_hls(
-        color2[0] / 255.0, color2[1] / 255.0, color2[2] / 255.0
-    )
+    r1, g1, b1 = colorsys.rgb_to_hls(color1[0] / 255.0, color1[1] / 255.0, color1[2] / 255.0)
+    r2, g2, b2 = colorsys.rgb_to_hls(color2[0] / 255.0, color2[1] / 255.0, color2[2] / 255.0)
 
     # Perceptual distance using HLS space
     return ((r1 - r2) ** 2 + (g1 - g2) ** 2 + (b1 - b2) ** 2) ** 0.5

@@ -92,9 +92,7 @@ class ImageParser:
         # Limit elements
         if len(elements) > self.max_elements:
             elements = elements[: self.max_elements]
-            logger.warning(
-                "Limited to %d elements (max: %d)", self.max_elements, len(elements)
-            )
+            logger.warning("Limited to %d elements (max: %d)", self.max_elements, len(elements))
 
         elapsed_ms = (time.perf_counter() - start_time) * 1000
 
@@ -107,9 +105,7 @@ class ImageParser:
             parse_time_ms=elapsed_ms,
         )
 
-        logger.info(
-            "Parsed %d elements in %.2f ms", len(elements), elapsed_ms
-        )
+        logger.info("Parsed %d elements in %.2f ms", len(elements), elapsed_ms)
 
         return result
 
@@ -157,17 +153,11 @@ class ImageParser:
                 continue
 
             # Classify the region
-            element_type = self._classify_region(
-                region_pixels, bbox, region["color"]
-            )
-            confidence = self._estimate_confidence(
-                region_pixels, element_type
-            )
+            element_type = self._classify_region(region_pixels, bbox, region["color"])
+            confidence = self._estimate_confidence(region_pixels, element_type)
 
             # Extract text estimate from region
-            text = self._estimate_region_text(
-                region_pixels, bbox
-            )
+            text = self._estimate_region_text(region_pixels, bbox)
 
             element = UIElement(
                 element_id=generate_element_id(len(elements), "img"),
@@ -189,9 +179,7 @@ class ImageParser:
 
         return elements
 
-    def _find_color_regions(
-        self, pixels: np.ndarray
-    ) -> list[dict[str, Any]]:
+    def _find_color_regions(self, pixels: np.ndarray) -> list[dict[str, Any]]:
         """Find distinct color regions in the image using connected components.
 
         Uses a simple flood-fill approach with color quantization.
@@ -207,9 +195,7 @@ class ImageParser:
         reshaped = quantized.reshape(-1, 3)
 
         # Find unique colors
-        unique_colors, inverse = np.unique(
-            reshaped, axis=0, return_inverse=True
-        )
+        unique_colors, inverse = np.unique(reshaped, axis=0, return_inverse=True)
 
         # Group by color
         color_positions: dict[tuple, list[tuple[int, int]]] = {}
@@ -257,12 +243,14 @@ class ImageParser:
                 region_mask[ys, xs] = True
                 region_pixels = pixels[region_mask]
 
-                regions.append({
-                    "bbox": bbox,
-                    "pixels": region_pixels,
-                    "color": color,
-                    "pixel_count": len(ys),
-                })
+                regions.append(
+                    {
+                        "bbox": bbox,
+                        "pixels": region_pixels,
+                        "color": color,
+                        "pixel_count": len(ys),
+                    }
+                )
 
                 visited[ys, xs] = True
 
@@ -271,9 +259,7 @@ class ImageParser:
 
         return regions
 
-    def _connected_components(
-        self, mask: np.ndarray
-    ) -> list[np.ndarray]:
+    def _connected_components(self, mask: np.ndarray) -> list[np.ndarray]:
         """Find connected components in a binary mask using flood fill.
 
         Returns list of (y_coords, x_coords) arrays for each component.
@@ -312,9 +298,7 @@ class ImageParser:
                             queue.append((ny, nx))
 
                 if component_ys:
-                    components.append(
-                        np.array([component_ys, component_xs])
-                    )
+                    components.append(np.array([component_ys, component_xs]))
 
         return components
 
@@ -344,11 +328,7 @@ class ImageParser:
                 return ElementType.BUTTON
 
         # Small, square-ish regions with solid color are likely icons
-        if (
-            bbox.area < 2000
-            and 0.5 <= aspect_ratio <= 2.0
-            and is_solid
-        ):
+        if bbox.area < 2000 and 0.5 <= aspect_ratio <= 2.0 and is_solid:
             return ElementType.ICON
 
         # Wide, short regions are likely text lines
@@ -370,10 +350,11 @@ class ImageParser:
         # Default: check text density
         if len(pixels) >= 12:
             text_ratio = sum(
-                1 for i in range(0, min(len(pixels), 100), 3)
-                if abs(pixels[i] - pixels[i+1]) > 40
-                or abs(pixels[i] - pixels[i+2]) > 40
-                or abs(pixels[i+1] - pixels[i+2]) > 40
+                1
+                for i in range(0, min(len(pixels), 100), 3)
+                if abs(pixels[i] - pixels[i + 1]) > 40
+                or abs(pixels[i] - pixels[i + 2]) > 40
+                or abs(pixels[i + 1] - pixels[i + 2]) > 40
             ) / (len(pixels) // 3)
 
             if text_ratio > 0.3:
@@ -402,9 +383,7 @@ class ImageParser:
 
         return min(base_confidence + area_factor, 0.95)
 
-    def _estimate_region_text(
-        self, pixels: list[int] | np.ndarray, bbox: BoundingBox
-    ) -> str:
+    def _estimate_region_text(self, pixels: list[int] | np.ndarray, bbox: BoundingBox) -> str:
         """Estimate text content from a region.
 
         This is a lightweight heuristic — for production use, integrate
@@ -447,9 +426,7 @@ class ImageParser:
         # Return a placeholder with estimated length
         return f"[text: ~{estimated_chars} chars]"
 
-    def _merge_overlapping(
-        self, elements: list[UIElement]
-    ) -> list[UIElement]:
+    def _merge_overlapping(self, elements: list[UIElement]) -> list[UIElement]:
         """Merge overlapping small elements into parent containers.
 
         Small overlapping elements are likely parts of a larger UI element.
@@ -471,10 +448,10 @@ class ImageParser:
                 if other.element_id in merged_ids:
                     continue
                 if elem.bbox.overlaps(other.bbox) and elem.bbox.area < other.bbox.area * 0.5:
-                        # Merge into parent
-                        other.children.append(elem)
-                        merged_ids.add(elem.element_id)
-                        break
+                    # Merge into parent
+                    other.children.append(elem)
+                    merged_ids.add(elem.element_id)
+                    break
 
         # Filter out merged elements
         result = [e for e in elements if e.element_id not in merged_ids]
